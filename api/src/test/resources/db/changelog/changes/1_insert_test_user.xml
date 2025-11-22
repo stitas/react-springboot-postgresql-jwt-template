@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="1_insert_test_user" author="stitas">
+        <sql>
+            -- PASWORD_HASH is for password "labas123"
+            INSERT INTO users (id,email,password_hash,auth_source,auth_source_user_id,role,created_at,updated_at) VALUES
+            (1, 'aaaa@gmail.com','$2a$10$1e9l1oykoxTdQXB86LLxout5pT2A/exoG/azV7l1gM1//uXOFctyG','LOCAL',NULL,'FREE',NOW(),NOW());
+        </sql>
+        <rollback>
+            <sql>
+                DELETE FROM users WHERE id = 1;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

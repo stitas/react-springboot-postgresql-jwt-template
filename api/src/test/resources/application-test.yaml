@@ -1,0 +1,36 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS TEST_LIQB\;CREATE SCHEMA IF NOT EXISTS TEST
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: MOCK
+            client-secret: MOCK
+            scope: [ openid, profile, email ]
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+  mail:
+    host: TEST
+    port: 25
+    username: TEST
+    password: TEST
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-test.xml
+    liquibase-schema: TEST_LIQB
+    default-schema: TEST
+url:
+  frontend: "http://localhost:5173"

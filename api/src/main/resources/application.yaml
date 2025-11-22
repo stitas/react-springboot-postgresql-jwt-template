@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: api
+  datasource:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    liquibase-schema: ${LIQB_SCHEMA}
+    default-schema: ${DEFAULT_SCHEMA}
+token:
+  password-reset:
+    valid-duration-seconds: 600 # 10 minutes
+  jwt:
+    valid-duration-seconds: 1200 # 20 minutes
+  jwt-refresh:
+    valid-duration-seconds: 2592000 # 1 month
+cron:
+  user-token-delete: "0 0 1 * * *" # Every day at 1 am
+  jwt-secret-refresh: "0 0 2 * */6 *" # At 02:00 AM, every 6 months

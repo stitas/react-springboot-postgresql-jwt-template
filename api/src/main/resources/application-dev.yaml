@@ -1,0 +1,42 @@
+server:
+  port: ${SERVER_PORT:8080}
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+  liquibase:
+    contexts: dev
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: [ openid, profile, email ]
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+  mail:
+    host: ${SMTP_SERVER_URL}
+    port: ${SMTP_SERVER_PORT}
+    username: ${SMTP_SERVER_USERNAME}
+    password: ${SMTP_SERVER_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: true
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+springdoc:
+  swagger-ui:
+    enabled: true
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+url:
+  frontend: ${FRONTEND_URL}

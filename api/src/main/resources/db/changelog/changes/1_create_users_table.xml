@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="1_create_users_table" author="stitas">
+        <sql>
+            CREATE TABLE users (
+                id BIGSERIAL NOT NULL UNIQUE,
+                email VARCHAR(256) NOT NULL UNIQUE,
+                password_hash VARCHAR(255),
+                auth_source VARCHAR(20) NOT NULL,
+                auth_source_user_id VARCHAR(100),
+                role VARCHAR(20) NOT NULL,
+                created_at TIMESTAMP,
+                updated_at TIMESTAMP,
+                PRIMARY KEY (id)
+            );
+
+            CREATE INDEX IF NOT EXISTS users_auth_source_user_id_idx ON users (auth_source_user_id);
+        </sql>
+
+        <rollback>
+            <sql>
+                DROP TABLE users;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

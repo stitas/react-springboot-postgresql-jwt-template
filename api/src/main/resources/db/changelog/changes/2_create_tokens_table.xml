@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="2_create_tokens_table" author="stitas">
+        <sql>
+            CREATE TABLE tokens (
+                id BIGSERIAL NOT NULL UNIQUE,
+                user_id BIGSERIAL NOT NULL,
+                token CHAR(36) NOT NULL UNIQUE,
+                type VARCHAR(50) NOT NULL,
+                used BOOLEAN NOT NULL,
+                expire_at TIMESTAMP NOT NULL,
+                created_at TIMESTAMP NOT NULL,
+                PRIMARY KEY(id)
+            );
+        </sql>
+        <sql>
+            ALTER TABLE tokens
+            ADD FOREIGN KEY(user_id) REFERENCES users(id)
+            ON UPDATE NO ACTION ON DELETE CASCADE;
+        </sql>
+        <sql>
+            CREATE INDEX IF NOT EXISTS
+            tokens_user_id_idx
+            ON tokens (user_id);
+        </sql>
+
+        <rollback>
+            <sql>
+                ALTER TABLE tokens
+                DROP CONSTRAINT IF EXISTS tokens_user_id_fkey;
+            </sql>
+            <sql>
+                DROP TABLE tokens;
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
