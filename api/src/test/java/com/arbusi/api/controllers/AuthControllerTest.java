@@ -95,7 +95,7 @@ public class AuthControllerTest extends BaseTestController {
     @WithMockUser(username = EMAIL)
     void whenMe_andWithAuthenticatedUser_then200AndBody() throws Exception {
         MeResponseDto meResponseDto = new MeResponseDto(USER_ID, EMAIL, UserRole.FREE);
-        when(authControllerService.me(any())).thenReturn(meResponseDto);
+        when(authControllerService.me()).thenReturn(meResponseDto);
 
         mockMvc.perform(get(ME))
                 .andExpect(status().isOk())

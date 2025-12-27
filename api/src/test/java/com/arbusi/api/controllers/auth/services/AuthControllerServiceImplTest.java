@@ -20,7 +20,6 @@ import com.arbusi.api.security.jwt.JwtUtils;
 import com.arbusi.api.services.TokenService;
 import com.arbusi.api.services.UserService;
 import com.arbusi.api.services.mail.MailService;
-import com.sun.security.auth.UserPrincipal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -240,7 +239,7 @@ public class AuthControllerServiceImplTest {
         when(userService.findByEmail(EMAIL)).thenReturn(Optional.empty());
         MockHttpServletResponse resp = new MockHttpServletResponse();
 
-        assertThrows(NotFoundException.class, () -> service.logout(new UserPrincipal(EMAIL), resp));
+        assertThrows(NotFoundException.class, () -> service.logout(resp));
     }
 
     @Test
@@ -250,7 +249,7 @@ public class AuthControllerServiceImplTest {
 
         MockHttpServletResponse resp = new MockHttpServletResponse();
 
-        service.logout(new UserPrincipal(EMAIL), resp);
+        service.logout(resp);
 
         verify(tokenService).deleteByUserAndType(persisted, TokenType.JWT_REFRESH);
 
@@ -265,7 +264,7 @@ public class AuthControllerServiceImplTest {
         User persisted = user(EMAIL, ENCODED_PASSWORD);
         when(userService.findByEmail(EMAIL)).thenReturn(Optional.of(persisted));
 
-        MeResponseDto dto = service.me(new UserPrincipal(EMAIL));
+        MeResponseDto dto = service.me();
 
         assertEquals(EMAIL, dto.email());
         assertEquals(UserRole.FREE, dto.role());
@@ -275,7 +274,7 @@ public class AuthControllerServiceImplTest {
     void whenMe_userNotFound_thenThrowNotFound() {
         when(userService.findByEmail(EMAIL)).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> service.me(new UserPrincipal(EMAIL)));
+        assertThrows(NotFoundException.class, () -> service.me());
     }
 
     @Test

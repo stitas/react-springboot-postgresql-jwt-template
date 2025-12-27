@@ -20,7 +20,6 @@ import com.arbusi.api.security.jwt.JwtUtils;
 import com.arbusi.api.services.TokenService;
 import com.arbusi.api.services.UserService;
 import com.arbusi.api.services.mail.MailService;
-import com.sun.security.auth.UserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseCookie;
@@ -30,7 +29,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -109,26 +107,16 @@ public class AuthControllerServiceImpl implements AuthControllerService {
     }
 
     @Override
-    public void logout(Principal principal, HttpServletResponse resp) {
-        if(userService.findByEmail(principal.getName()).isEmpty()) {
-            throw new NotFoundException("User not found");
-        }
-
-        User user = userService.findByEmail(principal.getName()).get();
-
+    public void logout(HttpServletResponse resp) {
+        User user = userService.getCurrentUser();
         // Log user out of all instances
         tokenService.deleteByUserAndType(user, TokenType.JWT_REFRESH);
         writeRefreshCookie(resp, "", true);
     }
 
     @Override
-    public MeResponseDto me(Principal principal) {
-        String email = principal.getName();
-
-        User user = userService.findByEmail(email).orElseThrow(
-                () -> new NotFoundException("Unknown User")
-        );
-
+    public MeResponseDto me() {
+        User user = userService.getCurrentUser();
         return new MeResponseDto(user.getId(), user.getEmail(), user.getRole());
     }
 
@@ -149,7 +137,7 @@ public class AuthControllerServiceImpl implements AuthControllerService {
         user.setPasswordHash(bCryptPasswordEncoder.encode(requestDto.password()));
         userService.save(user);
 
-        logout(new UserPrincipal(user.getEmail()), resp);
+        logout(resp);
     }
 
     @Override

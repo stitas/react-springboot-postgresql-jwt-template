@@ -9,7 +9,6 @@ import com.arbusi.api.controllers.auth.services.AuthControllerService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -19,9 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
-
-@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -70,8 +66,8 @@ public class AuthController {
             description = "Deletes the refresh token. Logs out user form all instances."
     )
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(Principal principal, HttpServletResponse resp) {
-        authControllerService.logout(principal, resp);
+    public ResponseEntity<Void> logout(HttpServletResponse resp) {
+        authControllerService.logout(resp);
         return ResponseEntity.noContent().build();
     }
 
@@ -80,8 +76,8 @@ public class AuthController {
             description = "Returns user info"
     )
     @GetMapping(value = "/me", produces = "application/json")
-    public ResponseEntity<MeResponseDto> me(Principal principal) {
-        return ResponseEntity.ok(authControllerService.me(principal));
+    public ResponseEntity<MeResponseDto> me() {
+        return ResponseEntity.ok(authControllerService.me());
     }
 
     @GetMapping("/csrf")

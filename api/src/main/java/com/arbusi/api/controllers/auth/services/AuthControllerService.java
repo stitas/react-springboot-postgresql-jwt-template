@@ -16,9 +16,9 @@ public interface AuthControllerService {
 
     AuthResponseDto refreshToken(String refreshToken, HttpServletResponse resp);
 
-    void logout(Principal principal, HttpServletResponse resp);
+    void logout(HttpServletResponse resp);
 
-    MeResponseDto me(Principal principal);
+    MeResponseDto me();
 
     void resetPassword(PasswordResetRequestDto requestDto, HttpServletResponse resp);
 

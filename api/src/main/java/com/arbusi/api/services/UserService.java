@@ -11,4 +11,6 @@ public interface UserService {
     Optional<User> findByAuthSourceUserId(String authSourceUserId);
 
     boolean existsByEmail(String email);
+
+    User getCurrentUser();
 }
