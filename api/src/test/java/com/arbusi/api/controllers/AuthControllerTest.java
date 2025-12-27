@@ -8,6 +8,7 @@ import com.arbusi.api.controllers.auth.dto.PasswordResetRequestDto;
 import com.arbusi.api.controllers.auth.dto.SendPasswordResetEmailRequestDto;
 import com.arbusi.api.controllers.auth.services.AuthControllerService;
 import com.arbusi.api.enums.UserRole;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,11 +18,10 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import java.security.Principal;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -39,13 +39,13 @@ public class AuthControllerTest extends BaseTestController {
     private static final String SEND_RESET_PASSWORD_EMAIL = BASE + "/password-reset-request";
     private static final String ME = BASE + "/me";
     private static final String CSRF = BASE + "/csrf";
+    private static final String REFRESH = BASE + "/refresh";
+    private static final String LOGOUT = BASE + "/logout";
     private static final String EMAIL = "email@example.com";
     private static final String PASSWORD = "password123";
     private static final String NEW_PASSWORD = "newPass!234";
     private static final String TOKEN = "token-xyz";
     private static final long USER_ID = 101L;
-
-    private Principal principal;
 
     @MockitoBean
     private AuthControllerService authControllerService;
@@ -53,7 +53,6 @@ public class AuthControllerTest extends BaseTestController {
     @BeforeEach
     void setup() {
         objectMapper.findAndRegisterModules();
-        principal = () -> EMAIL;
     }
 
     @Test
@@ -149,6 +148,48 @@ public class AuthControllerTest extends BaseTestController {
         ArgumentCaptor<SendPasswordResetEmailRequestDto> captor = ArgumentCaptor.forClass(SendPasswordResetEmailRequestDto.class);
         verify(authControllerService).sendResetPasswordEmail(captor.capture());
         assertEquals(EMAIL, captor.getValue().email());
+    }
+
+    @Test
+    void whenRefreshToken_withCookie_andCsrf_then200AndDelegatesToService() throws Exception {
+        String refreshToken = "refresh-123";
+        AuthResponseDto responseDto = new AuthResponseDto(TOKEN);
+        when(authControllerService.refreshToken(any(String.class), any(HttpServletResponse.class)))
+                .thenReturn(responseDto);
+
+        mockMvc.perform(post(REFRESH)
+                        .with(csrf())
+                        .cookie(new Cookie("refresh_token", refreshToken))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value(TOKEN));
+
+        ArgumentCaptor<String> tokenCaptor = ArgumentCaptor.forClass(String.class);
+        verify(authControllerService).refreshToken(tokenCaptor.capture(), any(HttpServletResponse.class));
+        assertEquals(refreshToken, tokenCaptor.getValue());
+    }
+
+    @Test
+    void whenRefreshToken_withoutCookie_then401AndServiceNotCalled() throws Exception {
+        mockMvc.perform(post(REFRESH)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+
+        verify(authControllerService, never()).refreshToken(any(), any(HttpServletResponse.class));
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL)
+    void whenLogout_withCsrf_then204AndDelegatesToService() throws Exception {
+        doNothing().when(authControllerService).logout(any(HttpServletResponse.class));
+        mockMvc.perform(post(LOGOUT)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        verify(authControllerService).logout(any(HttpServletResponse.class));
+
     }
 
     private AuthRequestDto createAuthRequest() {

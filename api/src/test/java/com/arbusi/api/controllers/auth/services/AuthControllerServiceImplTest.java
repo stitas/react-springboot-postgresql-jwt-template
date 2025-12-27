@@ -42,7 +42,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthControllerServiceImplTest {
@@ -53,7 +56,6 @@ public class AuthControllerServiceImplTest {
     private static final String JWT2 = "jwt-token-2";
     private static final String REFRESH = "refresh-token";
     private static final String NEW_REFRESH = "new-refresh-token";
-    private static final int REFRESH_VALID_SECONDS = 3600;
     private static final String REFRESH_PATH = "/api/v1/auth/refresh";
     private static final String NEW_PASSWORD = "newStrongPass!1";
     private static final String ENCODED_NEW_PASSWORD = "encodedNew";
@@ -235,17 +237,9 @@ public class AuthControllerServiceImplTest {
     }
 
     @Test
-    void whenLogout_userNotFound_thenThrowNotFound() {
-        when(userService.findByEmail(EMAIL)).thenReturn(Optional.empty());
-        MockHttpServletResponse resp = new MockHttpServletResponse();
-
-        assertThrows(NotFoundException.class, () -> service.logout(resp));
-    }
-
-    @Test
     void whenLogout_thenDeleteByUserAndClearCookie() {
         User persisted = user(EMAIL, ENCODED_PASSWORD);
-        when(userService.findByEmail(EMAIL)).thenReturn(Optional.of(persisted));
+        when(userService.getCurrentUser()).thenReturn(persisted);
 
         MockHttpServletResponse resp = new MockHttpServletResponse();
 
@@ -262,19 +256,12 @@ public class AuthControllerServiceImplTest {
     @Test
     void whenMe_thenReturnDto() {
         User persisted = user(EMAIL, ENCODED_PASSWORD);
-        when(userService.findByEmail(EMAIL)).thenReturn(Optional.of(persisted));
+        when(userService.getCurrentUser()).thenReturn(persisted);
 
         MeResponseDto dto = service.me();
 
         assertEquals(EMAIL, dto.email());
         assertEquals(UserRole.FREE, dto.role());
-    }
-
-    @Test
-    void whenMe_userNotFound_thenThrowNotFound() {
-        when(userService.findByEmail(EMAIL)).thenReturn(Optional.empty());
-
-        assertThrows(NotFoundException.class, () -> service.me());
     }
 
     @Test
@@ -313,7 +300,7 @@ public class AuthControllerServiceImplTest {
         when(bCryptPasswordEncoder.encode(NEW_PASSWORD)).thenReturn(ENCODED_NEW_PASSWORD);
         when(tokenService.save(any(Token.class))).thenAnswer(inv -> inv.getArgument(0));
         when(userService.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
-        when(userService.findByEmail(EMAIL)).thenReturn(Optional.of(persisted));
+        when(userService.getCurrentUser()).thenReturn(persisted);
 
         MockHttpServletResponse resp = new MockHttpServletResponse();
 

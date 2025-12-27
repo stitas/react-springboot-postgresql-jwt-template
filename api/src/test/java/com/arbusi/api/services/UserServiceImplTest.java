@@ -1,10 +1,13 @@
-package com.arbusi.api.services.impl;
+package com.arbusi.api.services;
 
 import com.arbusi.api.enums.AuthSource;
 import com.arbusi.api.enums.UserRole;
+import com.arbusi.api.exceptions.UnauthorizedException;
 import com.arbusi.api.models.User;
 import com.arbusi.api.repositories.UserRepository;
-import com.arbusi.api.services.UserService;
+import com.arbusi.api.security.SecurityUser;
+import com.arbusi.api.services.impl.UserServiceImpl;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,12 +15,15 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -41,6 +47,11 @@ public class UserServiceImplTest {
     @BeforeEach
     void setUp() {
         userService = new UserServiceImpl(userRepository);
+    }
+
+    @AfterEach
+    void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -121,6 +132,34 @@ public class UserServiceImplTest {
 
         verify(userRepository).existsByEmail(OTHER_EMAIL);
         assertFalse(exists);
+    }
+
+    @Test
+    void whenGetCurrentUser_withValidAuthentication_thenReturnsUser() {
+        User user = createUser(EMAIL, AUTH_SOURCE_USER_ID, PASSWORD_HASH);
+        SecurityUser securityUser = new SecurityUser(user);
+
+        var auth = new UsernamePasswordAuthenticationToken(securityUser, null, securityUser.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        User result = userService.getCurrentUser();
+
+        assertSame(user, result);
+    }
+
+    @Test
+    void whenGetCurrentUser_withoutAuthentication_thenThrowsUnauthorized() {
+        SecurityContextHolder.clearContext();
+
+        assertThrows(UnauthorizedException.class, () -> userService.getCurrentUser());
+    }
+
+    @Test
+    void whenGetCurrentUser_withNonSecurityUserPrincipal_thenThrowsUnauthorized() {
+        var auth = new UsernamePasswordAuthenticationToken("some-principal", null);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        assertThrows(UnauthorizedException.class, () -> userService.getCurrentUser());
     }
 
     private User createUser(String email, String authSourceUserId, String passwordHash) {
