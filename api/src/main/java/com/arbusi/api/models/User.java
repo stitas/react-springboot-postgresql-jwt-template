@@ -36,29 +36,31 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
+    @Column(name = "id")
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 256)
+    @Column(name = "email", nullable = false, unique = true, length = 256)
     private String email;
 
-    @Column(length = 255)
+    @Column(name = "password_hash")
     private String passwordHash; // null for pure OAuth
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(name = "auth_source", nullable = false, length = 20)
     private AuthSource authSource;
 
-    @Column(length = 100)
+    @Column(name = "auth_source_user_id", length = 100)
     private String authSourceUserId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(name = "role", nullable = false, length = 20)
     private UserRole role;
 
     @CreationTimestamp
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 }
-

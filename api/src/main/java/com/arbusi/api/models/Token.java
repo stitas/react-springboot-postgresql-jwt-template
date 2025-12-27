@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -27,32 +28,41 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tokens")
+@Table(name = "token")
 @Builder
 @SequenceGenerator(
-        name = "tokens_id_seq",
-        sequenceName = "tokens_id_seq",
+        name = "token_id_seq",
+        sequenceName = "token_id_seq",
         allocationSize = 1
 )
 public class Token {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tokens_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "token_id_seq")
+    @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "token", nullable = false, length = 36)
     private String token;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false, length = 50)
     private TokenType type;
 
+    @Column(name = "used", nullable = false)
     private Boolean used;
 
-    @Column
+    @Column(name = "expire_at", nullable = false)
     private LocalDateTime expireAt;
 
     @CreationTimestamp
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 }
