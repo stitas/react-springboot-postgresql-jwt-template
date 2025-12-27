@@ -1,8 +1,11 @@
 package com.arbusi.api.models;
 
+import com.arbusi.api.configuration.logging.LoggableEntity;
+import com.arbusi.api.configuration.logging.LoggableEntityListener;
 import com.arbusi.api.enums.TokenType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
@@ -27,6 +30,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(LoggableEntityListener.class)
 @Entity
 @Table(name = "token")
 @Builder
@@ -35,7 +39,7 @@ import java.time.LocalDateTime;
         sequenceName = "token_id_seq",
         allocationSize = 1
 )
-public class Token {
+public class Token implements LoggableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "token_id_seq")
     @Column(name = "id", nullable = false)
@@ -65,4 +69,17 @@ public class Token {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @Override
+    public String getLogBody() {
+        return "Token[" + "id=" + id +
+                ", token=" + token +
+                ", user=" + user.getId() +
+                ", type=" + type +
+                ", used=" + used +
+                ", expireAt=" + expireAt +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                "]";
+    }
 }

@@ -1,9 +1,12 @@
 package com.arbusi.api.models;
 
+import com.arbusi.api.configuration.logging.LoggableEntity;
+import com.arbusi.api.configuration.logging.LoggableEntityListener;
 import com.arbusi.api.enums.AuthSource;
 import com.arbusi.api.enums.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -31,9 +34,10 @@ import java.time.LocalDateTime;
         sequenceName = "users_id_seq",
         allocationSize = 1
 )
+@EntityListeners(LoggableEntityListener.class)
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements LoggableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
     @Column(name = "id")
@@ -63,4 +67,16 @@ public class User {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @Override
+    public String getLogBody() {
+        return "User[" + "id=" + id +
+                ", email=" + email +
+                ", authSource=" + authSource +
+                ", authSourceUserId=" + authSourceUserId +
+                ", role=" + role +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                "]";
+    }
 }
