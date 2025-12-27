@@ -1,10 +1,10 @@
-package com.arbusi.api.controllers.services;
+package com.arbusi.api.controllers.auth.services;
 
-import com.arbusi.api.controllers.dto.AuthRequestDto;
-import com.arbusi.api.controllers.dto.AuthResponseDto;
-import com.arbusi.api.controllers.dto.MeResponseDto;
-import com.arbusi.api.controllers.dto.PasswordResetRequestDto;
-import com.arbusi.api.controllers.dto.SendPasswordResetEmailRequestDto;
+import com.arbusi.api.controllers.auth.dto.AuthRequestDto;
+import com.arbusi.api.controllers.auth.dto.AuthResponseDto;
+import com.arbusi.api.controllers.auth.dto.MeResponseDto;
+import com.arbusi.api.controllers.auth.dto.PasswordResetRequestDto;
+import com.arbusi.api.controllers.auth.dto.SendPasswordResetEmailRequestDto;
 import com.arbusi.api.enums.AuthSource;
 import com.arbusi.api.enums.TokenType;
 import com.arbusi.api.enums.UserRole;
@@ -33,11 +33,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

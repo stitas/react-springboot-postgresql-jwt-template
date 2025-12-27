@@ -1,4 +1,4 @@
-package com.arbusi.api.controllers.dto;
+package com.arbusi.api.controllers.auth.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;

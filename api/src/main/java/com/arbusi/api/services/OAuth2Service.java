@@ -1,6 +1,6 @@
 package com.arbusi.api.services;
 
-import com.arbusi.api.controllers.dto.AuthResponseDto;
+import com.arbusi.api.controllers.auth.dto.AuthResponseDto;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 

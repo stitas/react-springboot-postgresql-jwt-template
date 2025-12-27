@@ -1,12 +1,12 @@
 package com.arbusi.api.controllers;
 
 import com.arbusi.api.base.BaseTestController;
-import com.arbusi.api.controllers.dto.AuthRequestDto;
-import com.arbusi.api.controllers.dto.AuthResponseDto;
-import com.arbusi.api.controllers.dto.MeResponseDto;
-import com.arbusi.api.controllers.dto.PasswordResetRequestDto;
-import com.arbusi.api.controllers.dto.SendPasswordResetEmailRequestDto;
-import com.arbusi.api.controllers.services.AuthControllerService;
+import com.arbusi.api.controllers.auth.dto.AuthRequestDto;
+import com.arbusi.api.controllers.auth.dto.AuthResponseDto;
+import com.arbusi.api.controllers.auth.dto.MeResponseDto;
+import com.arbusi.api.controllers.auth.dto.PasswordResetRequestDto;
+import com.arbusi.api.controllers.auth.dto.SendPasswordResetEmailRequestDto;
+import com.arbusi.api.controllers.auth.services.AuthControllerService;
 import com.arbusi.api.enums.UserRole;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,11 +1,11 @@
-package com.arbusi.api.controllers;
+package com.arbusi.api.controllers.auth;
 
-import com.arbusi.api.controllers.dto.AuthRequestDto;
-import com.arbusi.api.controllers.dto.AuthResponseDto;
-import com.arbusi.api.controllers.dto.MeResponseDto;
-import com.arbusi.api.controllers.dto.PasswordResetRequestDto;
-import com.arbusi.api.controllers.dto.SendPasswordResetEmailRequestDto;
-import com.arbusi.api.controllers.services.AuthControllerService;
+import com.arbusi.api.controllers.auth.dto.AuthRequestDto;
+import com.arbusi.api.controllers.auth.dto.AuthResponseDto;
+import com.arbusi.api.controllers.auth.dto.MeResponseDto;
+import com.arbusi.api.controllers.auth.dto.PasswordResetRequestDto;
+import com.arbusi.api.controllers.auth.dto.SendPasswordResetEmailRequestDto;
+import com.arbusi.api.controllers.auth.services.AuthControllerService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletResponse;

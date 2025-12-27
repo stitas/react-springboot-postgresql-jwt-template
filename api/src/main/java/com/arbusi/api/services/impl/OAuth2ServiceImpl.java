@@ -1,6 +1,6 @@
 package com.arbusi.api.services.impl;
 
-import com.arbusi.api.controllers.dto.AuthResponseDto;
+import com.arbusi.api.controllers.auth.dto.AuthResponseDto;
 import com.arbusi.api.enums.TokenType;
 import com.arbusi.api.exceptions.NotFoundException;
 import com.arbusi.api.models.User;

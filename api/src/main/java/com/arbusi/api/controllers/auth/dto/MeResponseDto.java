@@ -1,4 +1,4 @@
-package com.arbusi.api.controllers.dto;
+package com.arbusi.api.controllers.auth.dto;
 
 import com.arbusi.api.enums.UserRole;
 import io.swagger.v3.oas.annotations.media.Schema;

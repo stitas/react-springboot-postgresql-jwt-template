@@ -1,6 +1,6 @@
 package com.arbusi.api.services;
 
-import com.arbusi.api.controllers.dto.AuthResponseDto;
+import com.arbusi.api.controllers.auth.dto.AuthResponseDto;
 import com.arbusi.api.enums.AuthSource;
 import com.arbusi.api.enums.TokenType;
 import com.arbusi.api.enums.UserRole;

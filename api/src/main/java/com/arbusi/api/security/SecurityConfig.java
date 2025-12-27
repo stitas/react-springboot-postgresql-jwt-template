@@ -1,6 +1,6 @@
 package com.arbusi.api.security;
 
-import com.arbusi.api.controllers.dto.AuthResponseDto;
+import com.arbusi.api.controllers.auth.dto.AuthResponseDto;
 import com.arbusi.api.properties.UrlProperties;
 import com.arbusi.api.security.jwt.JwtAuthTokenFilter;
 import com.arbusi.api.security.jwt.JwtUtils;
