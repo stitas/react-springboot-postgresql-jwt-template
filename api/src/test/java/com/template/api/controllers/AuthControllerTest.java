@@ -10,7 +10,6 @@ import com.template.api.controllers.auth.services.AuthControllerService;
 import com.template.api.enums.UserRole;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,11 +49,6 @@ public class AuthControllerTest extends BaseTestController {
     @MockitoBean
     private AuthControllerService authControllerService;
 
-    @BeforeEach
-    void setup() {
-        objectMapper.findAndRegisterModules();
-    }
-
     @Test
     void whenRegister_withCsrf_then201() throws Exception {
         AuthRequestDto requestDto = createAuthRequest();
@@ -67,7 +61,7 @@ public class AuthControllerTest extends BaseTestController {
         mockMvc.perform(post(REGISTER)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(jsonMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.token").exists());
 
@@ -85,7 +79,7 @@ public class AuthControllerTest extends BaseTestController {
         mockMvc.perform(post(LOGIN)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDto)))
+                        .content(jsonMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token").exists());
     }
@@ -124,7 +118,7 @@ public class AuthControllerTest extends BaseTestController {
         mockMvc.perform(post(RESET_PASSWORD)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                        .content(jsonMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
 
         ArgumentCaptor<PasswordResetRequestDto> captor = ArgumentCaptor.forClass(PasswordResetRequestDto.class);
@@ -142,7 +136,7 @@ public class AuthControllerTest extends BaseTestController {
         mockMvc.perform(post(SEND_RESET_PASSWORD_EMAIL)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                        .content(jsonMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
 
         ArgumentCaptor<SendPasswordResetEmailRequestDto> captor = ArgumentCaptor.forClass(SendPasswordResetEmailRequestDto.class);

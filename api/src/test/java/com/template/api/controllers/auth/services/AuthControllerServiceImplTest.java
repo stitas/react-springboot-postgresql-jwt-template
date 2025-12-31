@@ -300,7 +300,6 @@ public class AuthControllerServiceImplTest {
         when(bCryptPasswordEncoder.encode(NEW_PASSWORD)).thenReturn(ENCODED_NEW_PASSWORD);
         when(tokenService.save(any(Token.class))).thenAnswer(inv -> inv.getArgument(0));
         when(userService.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
-        when(userService.getCurrentUser()).thenReturn(persisted);
 
         MockHttpServletResponse resp = new MockHttpServletResponse();
 

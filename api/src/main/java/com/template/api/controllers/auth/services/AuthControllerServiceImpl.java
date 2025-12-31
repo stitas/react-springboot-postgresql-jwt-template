@@ -110,8 +110,7 @@ public class AuthControllerServiceImpl implements AuthControllerService {
     public void logout(HttpServletResponse resp) {
         User user = userService.getCurrentUser();
         // Log user out of all instances
-        tokenService.deleteByUserAndType(user, TokenType.JWT_REFRESH);
-        writeRefreshCookie(resp, "", true);
+        clearUserToken(resp, user);
     }
 
     @Override
@@ -137,7 +136,7 @@ public class AuthControllerServiceImpl implements AuthControllerService {
         user.setPasswordHash(bCryptPasswordEncoder.encode(requestDto.password()));
         userService.save(user);
 
-        logout(resp);
+        clearUserToken(resp, user);
     }
 
     @Override
@@ -165,5 +164,10 @@ public class AuthControllerServiceImpl implements AuthControllerService {
                 .maxAge(maxAge)
                 .build();
         resp.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    private void clearUserToken(HttpServletResponse resp, User user) {
+        tokenService.deleteByUserAndType(user, TokenType.JWT_REFRESH);
+        writeRefreshCookie(resp, "", true);
     }
 }
